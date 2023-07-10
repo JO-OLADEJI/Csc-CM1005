@@ -104,7 +104,7 @@ function draw()
 	endShape();
 	beginShape();
 	vertex(gameChar_x + 4, gameChar_y - 22);
-	vertex(gameChar_x + 1, gameChar_y - 17);
+	vertex(gameChar_x + 7, gameChar_y - 17);
 	vertex(gameChar_x + 4, gameChar_y - 10);
 	endShape();
 	strokeWeight(2);
