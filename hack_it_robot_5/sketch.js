@@ -19,7 +19,7 @@ function setup()
     robotHeights = [50,120,110];
     headWidths = [0.7,0.8,1.2];
     eyeSizes = [15, 23, 30];
-    noseScales = [0.8, 1, 1.2];
+    noseScales = [0.5, 0.8, 1.2];
 }
 
 function draw()
