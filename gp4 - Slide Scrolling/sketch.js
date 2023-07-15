@@ -1,10 +1,8 @@
 /*
 
-The Game Project
+The Game Project 4
 
-Week 3
-
-Game interaction
+Side Scrolling
 
 */
 
@@ -18,20 +16,28 @@ var isFalling;
 var isPlummeting;
 
 var collectable;
-var canyon;
-
+var canyons;
+var clouds;
+var mountains;
+var trees_x;
+var treePos_y;
 var collectableAndCharacterDst;
 
+var cameraPosX;
+var groundWidth;
+
 function setup() {
+  // canvas size
   createCanvas(1024, 576);
+
+  // INIT
   floorPos_y = (height * 3) / 4;
   gameChar_x = width / 2;
   gameChar_y = floorPos_y;
-
-  isLeft = false;
-  isRight = false;
-  isFalling = false;
-  isPlummeting = false;
+  treePos_y = height / 2;
+  trees_x = [300, 550, 920, 1055, 1512, 1927, 2289, 2700, 2850];
+  cameraPosX = 0;
+  groundWidth = 3000;
 
   collectable = {
     y_pos: floorPos_y,
@@ -40,31 +46,226 @@ function setup() {
     isFound: false,
   };
 
-  canyon = {
-    x_pos: 100,
-    y_pos: floorPos_y,
-    width: 100,
-  };
+  canyons = [
+    {
+      x_pos: 100,
+      y_pos: floorPos_y,
+      width: 100,
+    },
+    {
+      x_pos: 1200,
+      y_pos: floorPos_y,
+      width: 150,
+    },
+    {
+      x_pos: 2420,
+      y_pos: floorPos_y,
+      width: 200,
+    },
+  ];
+
+  mountains = [
+    {
+      x_pos: 700,
+      y_pos: 200,
+    },
+    {
+      x_pos: 1500,
+      y_pos: 200,
+    },
+    {
+      x_pos: 2800,
+      y_pos: 200,
+    },
+  ];
+
+  clouds = [
+    {
+      x_pos: 40,
+      y_pos: 50,
+      scale: 0.8,
+      speed: "slow",
+    },
+    {
+      x_pos: 550,
+      y_pos: 150,
+      scale: 1.8,
+      speed: "mid",
+    },
+    {
+      x_pos: 1300,
+      y_pos: 120,
+      scale: 0.8,
+      speed: "slow",
+    },
+    {
+      x_pos: 1700,
+      y_pos: 150,
+      scale: 1.5,
+      speed: "fast",
+    },
+    {
+      x_pos: 2200,
+      y_pos: 0,
+      scale: 2.7,
+      speed: "mid",
+    },
+    {
+      x_pos: 4000,
+      y_pos: 150,
+      scale: 1.5,
+      speed: "fast",
+    },
+    {
+      x_pos: 3200,
+      y_pos: 60,
+      scale: 0.8,
+      speed: "slow",
+    },
+  ];
+
+  // Game Character Positions
+  isLeft = false;
+  isRight = false;
+  isFalling = false;
+  isPlummeting = false;
 }
 
 function draw() {
-  ///////////DRAWING CODE//////////
 
-  background(100, 155, 255); //fill the sky blue
+  // blue sky
+  background(100, 155, 255);
 
+  // green ground
   noStroke();
   fill(0, 155, 0);
-  rect(0, floorPos_y, width, height - floorPos_y); //draw some green ground
+  rect(0, floorPos_y, width, height - floorPos_y);
 
-  //draw the canyon
-  // 4. CANYON
+  // Side Scrolling
+  push();
+  translate(-cameraPosX, 0);
+
+  // CLOUDS
+  fill(255);
+  for (let i = 0; i < clouds.length; i++) {
+    rect(
+      clouds[i].x_pos + 43 * clouds[i].scale,
+      clouds[i].y_pos + 32 * clouds[i].scale,
+      180 * clouds[i].scale,
+      50 * clouds[i].scale,
+      25 * clouds[i].scale
+    );
+    // ellipse(193, 85, 60, 60);
+    ellipse(
+      clouds[i].x_pos + 93 * clouds[i].scale,
+      clouds[i].y_pos + 35 * clouds[i].scale,
+      60 * clouds[i].scale,
+      60 * clouds[i].scale
+    );
+    ellipse(
+      clouds[i].x_pos + 140 * clouds[i].scale,
+      clouds[i].y_pos + 15 * clouds[i].scale,
+      70 * clouds[i].scale,
+      70 * clouds[i].scale
+    );
+    ellipse(
+      clouds[i].x_pos + 180 * clouds[i].scale,
+      clouds[i].y_pos + 35 * clouds[i].scale,
+      60 * clouds[i].scale,
+      60 * clouds[i].scale
+    );
+  }
+
+  // MOUNTAIN
+  for (let i = 0; i < mountains.length; i++) {
+    fill(133, 136, 148);
+    triangle(
+      mountains[i].x_pos,
+      mountains[i].y_pos + 232,
+      mountains[i].x_pos + 103,
+      mountains[i].y_pos + 52,
+      mountains[i].x_pos + 225,
+      mountains[i].y_pos + 232
+    );
+    fill(74, 83, 98);
+    triangle(
+      mountains[i].x_pos + 175,
+      mountains[i].y_pos + 232,
+      mountains[i].x_pos + 250,
+      mountains[i].y_pos + 140,
+      mountains[i].x_pos + 302,
+      mountains[i].y_pos + 232
+    );
+    fill(183, 191, 203);
+    triangle(
+      mountains[i].x_pos + 25,
+      mountains[i].y_pos + 232,
+      mountains[i].x_pos + 150,
+      mountains[i].y_pos + 12,
+      mountains[i].x_pos + 275,
+      mountains[i].y_pos + 232
+    );
+  }
+
+  // CANYON
   noStroke();
-  fill(100, 155, 255);
-  rect(canyon.x_pos, canyon.y_pos, canyon.width, height - floorPos_y);
+  for (let i = 0; i < canyons.length; i++) {
+    fill(116, 75, 41);
+    rect(
+      canyons[i].x_pos - 5,
+      canyons[i].y_pos,
+      canyons[i].width + 10,
+      height - floorPos_y
+    );
+    fill(100, 155, 255);
+    rect(
+      canyons[i].x_pos,
+      canyons[i].y_pos,
+      canyons[i].width,
+      height - floorPos_y
+    );
+  }
 
-  //the game character
+  // TREES 1 (positioned behind the game character)
+  for (let i = 0; i < trees_x.length; i++) {
+    if (i % 2 == 0) {
+      fill(116, 75, 41);
+      rect(trees_x[i], treePos_y + 84, 30, 60); // stem
+      fill(62, 120, 79); // green shade 1
+      triangle(
+        trees_x[i] - 20,
+        372,
+        trees_x[i] + 15,
+        266,
+        trees_x[i] + 50,
+        372
+      );
+      fill(101, 156, 129); // green shade 2
+      triangle(
+        trees_x[i] - 20,
+        372,
+        trees_x[i] + 10,
+        281,
+        trees_x[i] + 40,
+        372
+      );
+    }
+  }
+
+  // COLLECTABLE
+  if (!collectable.isFound) {
+		fill(255, 215, 0);
+    ellipse(
+      collectable.x_pos - collectable.size / 2,
+      collectable.y_pos - collectable.size / 2,
+      collectable.size,
+      collectable.size
+    );
+  }
+
+  // GAME CHARACTER
   if (isLeft && isFalling) {
-    // add your jumping-left code
+    // jumping-left
     fill(255);
     stroke(0);
     strokeWeight(2);
@@ -91,7 +292,7 @@ function draw() {
 
     strokeWeight(1);
   } else if (isRight && isFalling) {
-    // add your jumping-right code
+    // jumping-right
     fill(255);
     stroke(0);
     strokeWeight(2);
@@ -118,7 +319,7 @@ function draw() {
 
     strokeWeight(1);
   } else if (isLeft) {
-    // add your walking left code
+    // walking left
     fill(255);
     stroke(0);
     strokeWeight(2);
@@ -138,7 +339,7 @@ function draw() {
 
     strokeWeight(1);
   } else if (isRight) {
-    // add your walking right code
+    // walking right
     fill(255);
     stroke(0);
     strokeWeight(2);
@@ -158,7 +359,7 @@ function draw() {
 
     strokeWeight(1);
   } else if (isFalling || isPlummeting) {
-    // add your jumping facing forwards code
+    // jumping facing forwards
     stroke(0);
     strokeWeight(2);
     fill(255);
@@ -192,7 +393,7 @@ function draw() {
 
     strokeWeight(1);
   } else {
-    // add your standing front facing code
+    // standing front facing
     stroke(0);
     strokeWeight(2);
     fill(255);
@@ -213,38 +414,87 @@ function draw() {
     ellipse(gameChar_x, gameChar_y - 55, 6, 6);
   }
 
-  ///////////INTERACTION CODE//////////
-  //Put conditional statements to move the game character below here
+  // TREES 2 (positioned in front of the game character)
+  noStroke();
+  for (let i = 0; i < trees_x.length; i++) {
+    if (i % 2 != 0) {
+      fill(116, 75, 41);
+      rect(trees_x[i], treePos_y + 84, 30, 60); // stem
+      fill(62, 120, 79); // green shade 1
+      triangle(
+        trees_x[i] - 20,
+        372,
+        trees_x[i] + 15,
+        266,
+        trees_x[i] + 50,
+        372
+      );
+      fill(101, 156, 129); // green shade 2
+      triangle(
+        trees_x[i] - 20,
+        372,
+        trees_x[i] + 10,
+        281,
+        trees_x[i] + 40,
+        372
+      );
+    }
+  }
 
-  // 1. Move the character left and right
+  // Side Scrolling
+  pop();
+
+  // INTERACTION CODE
+  // move character left and right
   if (isLeft) {
-    gameChar_x = constrain(gameChar_x - 3, 0 + 15, width - 15);
-  }
-  if (isRight) {
-    gameChar_x = constrain(gameChar_x + 3, 0 + 15, width - 15);
+    gameChar_x = constrain(gameChar_x - 3, 0 + 15, groundWidth - 15);
+
+    // shift the camera only when Game Character is at the center
+    if (gameChar_x >= width / 2 && gameChar_x < groundWidth - width / 2) {
+      cameraPosX = constrain(cameraPosX - 3, 0, groundWidth - width);
+
+      // cloud parallax
+      for (let i = 0; i < clouds.length; i++) {
+        if (clouds[i].speed == "slow") {
+          clouds[i].x_pos += 1;
+        } else if (clouds[i].speed == "mid") {
+          clouds[i].x_pos += 2;
+        } else if (clouds[i].speed == "fast") {
+          clouds[i].x_pos += 3;
+        }
+      }
+    }
   }
 
-  // 2. GRAVITY
+  if (isRight) {
+    gameChar_x = constrain(gameChar_x + 3, 0 + 15, groundWidth - 15);
+
+    // shift the camera only when Game Character is at the center
+    if (gameChar_x >= width / 2 && gameChar_x < groundWidth - width / 2) {
+      cameraPosX = constrain(cameraPosX + 3, 0, groundWidth - width);
+
+      // cloud parallax
+      for (let i = 0; i < clouds.length; i++) {
+        if (clouds[i].speed == "slow") {
+          clouds[i].x_pos -= 1;
+        } else if (clouds[i].speed == "mid") {
+          clouds[i].x_pos -= 2;
+        } else if (clouds[i].speed == "fast") {
+          clouds[i].x_pos -= 3.5;
+        }
+      }
+    }
+  }
+
+  // gravity effect
   if (gameChar_y < floorPos_y) {
     gameChar_y += 1;
     isFalling = true;
   } else {
     isFalling = false;
   }
-
   if (isPlummeting) {
     gameChar_y += 5;
-  }
-
-  // 3. COLLECTABLE
-  if (!collectable.isFound) {
-    fill(183, 191, 203);
-    ellipse(
-      collectable.x_pos - collectable.size / 2,
-      collectable.y_pos - collectable.size / 2,
-      collectable.size,
-      collectable.size
-    );
   }
 
   // interaction with collectable item
@@ -254,40 +504,48 @@ function draw() {
     gameChar_x,
     gameChar_y
   );
-
   if (collectableAndCharacterDst <= collectable.size) {
     collectable.isFound = true;
   }
 
-  // interaction with the canyon
-  // range = gameChar_x > canyon.y_pos && gameChar_x < (canyon.y_pos + canyon.width)
-  if (gameChar_x > canyon.x_pos && gameChar_x < canyon.x_pos + canyon.width) {
-    if (gameChar_y >= floorPos_y) {
-      isPlummeting = true;
+  // falling into the canyon
+  for (let i = 0; i < canyons.length; i++) {
+    if (
+      gameChar_x > canyons[i].x_pos &&
+      gameChar_x < canyons[i].x_pos + canyons[i].width
+    ) {
+      if (gameChar_y >= floorPos_y) {
+        isPlummeting = true;
+        break;
+      }
     }
   }
 }
 
 function keyPressed() {
-  // if statements to control the animation of the character when
-  // keys are pressed.
+  // when 'a' of left-arrow is pressed
   if ((keyCode == 65 || keyCode == 37) && !isPlummeting) {
     isLeft = true;
   }
+
+  // when 'd' or right-arrow is pressed
   if ((keyCode == 68 || keyCode == 39) && !isPlummeting) {
     isRight = true;
   }
 
+  // when 'w' or top-arrow is pressed
   if ((keyCode == 87 || keyCode == 38) && !isFalling && !isPlummeting) {
     gameChar_y -= 100;
   }
 }
+
 function keyReleased() {
-  // if statements to control the animation of the character when
-  // keys are released.
+  // when 'a' or left-arrow is released
   if (keyCode == 65 || keyCode == 37) {
     isLeft = false;
   }
+
+  // when 'd' or right-arrow is released
   if (keyCode == 68 || keyCode == 39) {
     isRight = false;
   }
