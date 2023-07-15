@@ -39,13 +39,6 @@ function setup() {
   cameraPosX = 0;
   groundWidth = 3000;
 
-  collectable = {
-    y_pos: floorPos_y,
-    x_pos: 60,
-    size: 40,
-    isFound: false,
-  };
-
   canyons = [
     {
       x_pos: 100,
@@ -63,6 +56,12 @@ function setup() {
       width: 200,
     },
   ];
+
+  collectable = {
+    y_pos: floorPos_y,
+    x_pos: 60,
+    size: 40,
+  };
 
   mountains = [
     {
@@ -132,7 +131,6 @@ function setup() {
 }
 
 function draw() {
-
   // blue sky
   background(100, 155, 255);
 
@@ -250,17 +248,6 @@ function draw() {
         372
       );
     }
-  }
-
-  // COLLECTABLE
-  if (!collectable.isFound) {
-		fill(255, 215, 0);
-    ellipse(
-      collectable.x_pos - collectable.size / 2,
-      collectable.y_pos - collectable.size / 2,
-      collectable.size,
-      collectable.size
-    );
   }
 
   // GAME CHARACTER
@@ -441,6 +428,15 @@ function draw() {
     }
   }
 
+  // COLLECTABLE
+  fill(255, 215, 0);
+  ellipse(
+    collectable.x_pos - collectable.size / 2,
+    collectable.y_pos - collectable.size / 2,
+    collectable.size,
+    collectable.size
+  );
+
   // Side Scrolling
   pop();
 
@@ -463,6 +459,11 @@ function draw() {
           clouds[i].x_pos += 3;
         }
       }
+
+      // mountains parallax
+      for (let i = 0; i < mountains.length; i++) {
+        mountains[i].x_pos += 0.2;
+      }
     }
   }
 
@@ -482,6 +483,11 @@ function draw() {
         } else if (clouds[i].speed == "fast") {
           clouds[i].x_pos -= 3.5;
         }
+      }
+
+      // mountains parallax
+      for (let i = 0; i < mountains.length; i++) {
+        mountains[i].x_pos -= 0.2;
       }
     }
   }
@@ -505,7 +511,25 @@ function draw() {
     gameChar_y
   );
   if (collectableAndCharacterDst <= collectable.size) {
-    collectable.isFound = true;
+    // make a new collectible item when the current one is found
+    // TRY 3 TIMES TO GET THE RULES RIGHT -> `canyons.length * 3`
+    for (let i = 0; i < canyons.length * 3; i++) {
+      // RULE 1 - collectible must be in the viewable portion of the screen
+      collectable.x_pos = random(
+        cameraPosX + collectable.size / 2,
+        cameraPosX + width - collectable.size / 2
+      );
+      // RULE 2 - collectible must not be above a canyon
+      if (
+        collectable.x_pos > canyons[i % canyons.length].x_pos &&
+        collectable.x_pos <
+          canyons[i % canyons.length].x_pos + canyons[i % canyons.length].width
+      ) {
+        continue;
+      } else {
+        break;
+      }
+    }
   }
 
   // falling into the canyon
