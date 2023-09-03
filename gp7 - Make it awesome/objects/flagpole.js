@@ -4,14 +4,19 @@ const flagpole = {
   displayWarning: false,
 
   draw: function () {
-    fill(0, 0, 0, gameCharacter.score < 3 ? 70 : 255);
+    fill(0, 0, 0, gameCharacter.score < collectables.data.length ? 70 : 255);
     rect(
       this.x,
       constants.HEIGHT / 2,
       5,
       constants.FLOOR_POS_Y - constants.HEIGHT / 2
     );
-    fill(246, 124, 49, gameCharacter.score < 3 ? 80 : 255);
+    fill(
+      246,
+      124,
+      49,
+      gameCharacter.score < collectables.data.length ? 80 : 255
+    );
     noStroke();
 
     if (this.isReached) {
@@ -37,7 +42,7 @@ const flagpole = {
 
   attemptCompleteGame: function () {
     if (Math.abs(this.x - gameCharacter.x) < 25) {
-      if (gameCharacter.score >= 3) {
+      if (gameCharacter.score == collectables.data.length) {
         this.isReached = true;
       } else {
         this.displayWarning = true;

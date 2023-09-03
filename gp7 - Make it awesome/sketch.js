@@ -20,7 +20,7 @@ function draw() {
   canyons.draw();
   trees.draw();
   flagpole.draw();
-  collectable.draw();
+  collectables.draw();
   for (let i = 0; i < platforms.data.length; i++) {
     platforms.create(
       platforms.data[i].x,
@@ -100,13 +100,16 @@ function draw() {
   }
 
   parallaxScrolling();
-  interactWithCollectable();
+  interactWithCollectables();
   interactWithCanyons();
   gameCharacter.checkFall(startGame);
 
   if (!flagpole.isReached) {
     flagpole.attemptCompleteGame();
   }
+
+  fill(0);
+  text(`(${mouseX}, ${mouseY})`, mouseX, mouseY);
 }
 
 // WORKING ✅
@@ -179,30 +182,20 @@ function parallaxScrolling() {
 }
 
 // WORKING ✅
-function interactWithCollectable() {
-  const proximity = collectable.getGameCharacterDistance();
-
-  if (proximity <= collectable.size - 5) {
-    gameCharacter.score += 1;
-
-    // make a new collectible item when the current one is found
-    for (let i = 0; i < canyons.data.length * 3; i++) {
-      // RULE 1 - collectible must be in the viewable portion of the screen
-      collectable.x = random(
-        GAME_STATE.cameraPosX + collectable.size / 2,
-        GAME_STATE.cameraPosX + width - collectable.size / 2
-      );
-      // RULE 2 - collectible must not be above a canyon
-      if (
-        collectable.x > canyons.data[i % canyons.data.length].x_pos &&
-        collectable.x <
-          canyons.data[i % canyons.data.length].x_pos +
-            canyons.data[i % canyons.data.length].width
-      ) {
-        continue;
-      } else {
-        break;
-      }
+function interactWithCollectables() {
+  for (let i = 0; i < collectables.data.length; i++) {
+    if (
+      dist(
+        gameCharacter.x,
+        gameCharacter.y,
+        collectables.data[i].x,
+        collectables.data[i].y
+      ) <=
+        collectables.data[i].size - 5 &&
+      collectables.data[i].isFound == false
+    ) {
+      collectables.data[i].isFound = true;
+      gameCharacter.score += 1;
     }
   }
 }

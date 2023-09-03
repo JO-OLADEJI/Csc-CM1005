@@ -6,7 +6,7 @@ const screenText = {
     fill(0);
     textSize(16);
     textFont("Monospace");
-    this.placeholder = "3 points needed";
+    this.placeholder = `${collectables.data.length} points needed`;
     text(
       this.placeholder,
       gameCharacter.x - textWidth(this.placeholder) / 2,
