@@ -80,6 +80,7 @@ function interactWithCollectables() {
     ) {
       collectables.data[i].isFound = true;
       gameCharacter.score += 1;
+      collectableSound.play();
     }
   }
 }

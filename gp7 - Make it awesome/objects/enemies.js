@@ -10,6 +10,7 @@ function Enemy(x, y, speedX, speedY, size, range) {
 
   this.draw = function () {
     fill(255, 0, 0);
+    noStroke();
     ellipse(this.currentX, this.currentY, this.size);
   };
 

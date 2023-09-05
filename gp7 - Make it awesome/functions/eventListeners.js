@@ -23,6 +23,7 @@ function keyPressed() {
     !flagpole.isReached
   ) {
     gameCharacter.y -= 120;
+    jumpSound.play();
   }
 }
 

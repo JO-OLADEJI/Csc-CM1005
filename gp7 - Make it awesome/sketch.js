@@ -1,5 +1,26 @@
+function preload() {
+  soundFormats("mp3", "wav");
+
+  jumpSound = loadSound("assets/sound/jump.wav");
+  fallSound = loadSound("assets/sound/fall.mp3");
+  collectableSound = loadSound("assets/sound/collectable.wav");
+  enemySound = loadSound("assets/sound/enemy.wav");
+  completeLevelSound = loadSound("assets/sound/complete.wav");
+  gameOverSound = loadSound("assets/sound/game-over.wav");
+  bgMusic = loadSound("assets/sound/bg-music.mp3");
+
+  completeLevelSound.setVolume(0.3);
+  collectableSound.setVolume(0.3);
+  enemySound.setVolume(0.3);
+  jumpSound.setVolume(0.3);
+  gameOverSound.setVolume(0.3);
+  fallSound.setVolume(0.3);
+  bgMusic.setVolume(0.15);
+}
+
 function setup() {
   createCanvas(constants.WIDTH, constants.HEIGHT);
+  bgMusic.loop();
 
   for (let i = 0; i < enemiesData.length; i++) {
     enemies.push(
@@ -71,6 +92,9 @@ function draw() {
     enemies[i].draw();
     enemies[i].setInMotion();
     if (enemies[i].getCharacterProximity() <= enemies[i].size) {
+      if (gameCharacter.lives > 0) {
+        enemySound.play();
+      }
       gameCharacter.lives -= 1;
       if (gameCharacter.lives > 0) {
         startGame();
@@ -84,10 +108,12 @@ function draw() {
   screenText.displayGameStats();
   if (gameCharacter.lives < 1) {
     screenText.displayGameOver();
-    return;
+    // gameOverSound.play();
+    // return;
   } else if (flagpole.isReached) {
     screenText.displayLevelComplete();
-    return;
+    // completeLevelSound.play();
+    // return;
   }
 
   // gravity
@@ -121,6 +147,9 @@ function draw() {
   }
 
   if (GAME_STATE.characterMovement.isPlummeting) {
+    if (gameCharacter.y == constants.FLOOR_POS_Y) {
+      fallSound.play();
+    }
     gameCharacter.y += 5;
   }
 
@@ -132,7 +161,4 @@ function draw() {
   if (!flagpole.isReached) {
     flagpole.attemptCompleteGame();
   }
-
-  fill(0);
-  text(`(${mouseX}, ${mouseY})`, mouseX, mouseY);
 }
