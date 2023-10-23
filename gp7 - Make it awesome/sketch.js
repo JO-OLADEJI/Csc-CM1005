@@ -1,13 +1,13 @@
 function preload() {
   soundFormats("mp3", "wav");
 
-  jumpSound = loadSound("assets/sound/jump.wav");
-  fallSound = loadSound("assets/sound/fall.mp3");
-  collectableSound = loadSound("assets/sound/collectable.wav");
-  enemySound = loadSound("assets/sound/enemy.wav");
-  completeLevelSound = loadSound("assets/sound/complete.wav");
-  gameOverSound = loadSound("assets/sound/game-over.wav");
-  bgMusic = loadSound("assets/sound/bg-music.mp3");
+  jumpSound = loadSound("./assets/sound/jump.wav");
+  fallSound = loadSound("./assets/sound/fall.mp3");
+  collectableSound = loadSound("./assets/sound/collectable.wav");
+  enemySound = loadSound("./assets/sound/enemy.wav");
+  completeLevelSound = loadSound("./assets/sound/complete.wav");
+  gameOverSound = loadSound("./assets/sound/game-over.wav");
+  bgMusic = loadSound("./assets/sound/bg-music.mp3");
 
   completeLevelSound.setVolume(0.3);
   collectableSound.setVolume(0.3);
